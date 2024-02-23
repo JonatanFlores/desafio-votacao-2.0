@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  cpf       String    @unique
+  name      String
+  password  String
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime? @updatedAt @map("updated_at")
+  // votes     Vote[]
+
+  @@map("users")
+}
+
+model Agenda {
+  id          String    @id @default(uuid())
+  description String
+  duration    Int       @default(60)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime? @updatedAt @map("updated_at")
+  // votes       Vote[]
+
+  @@map("agendas")
+}
+
+enum Choices {
+  YES
+  NO
+}
+
+model Vote {
+  id        String   @id @default(uuid())
+  cpf       String
+  agendaId  String   @map("agenda_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  choice    Choices
+  // user      User     @relation(fields: [cpf], references: [cpf])
+  // agenda    Agenda   @relation(fields: [agendaId], references: [id])
+
+  @@unique([cpf, agendaId])
+  @@map("votes")
+}
