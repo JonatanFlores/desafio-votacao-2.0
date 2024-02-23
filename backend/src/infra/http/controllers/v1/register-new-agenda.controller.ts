@@ -4,7 +4,7 @@ import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
 
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
 import {
-  ApiBearerAuth,
+  // ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiResponse,
@@ -23,7 +23,7 @@ const inputSchema = z.object({
 type RegisterNewAgendaInput = z.infer<typeof inputSchema>;
 
 @ApiTags('agenda')
-@ApiBearerAuth()
+// @ApiBearerAuth()
 @Controller('/v1/agenda')
 export class RegisterNewAgendaController {
   constructor(private readonly agendaData: AgendaData) {}
