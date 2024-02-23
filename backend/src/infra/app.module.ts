@@ -1,5 +1,8 @@
 import { envSchema } from './env/env';
 import { EnvModule } from './env/env.module';
+import { AuthModule } from './auth/auth.module';
+import { HttpModule } from './http/http.module';
+
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
@@ -10,6 +13,8 @@ import { ConfigModule } from '@nestjs/config';
       isGlobal: true,
     }),
     EnvModule,
+    AuthModule,
+    HttpModule,
   ],
 })
 export class AppModule {}
