@@ -1,6 +1,6 @@
 import { Public } from '@/infra/auth/public';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
-import { AgendaData } from '@/application/data/agenda-data';
+import { AgendaData } from '@/infra/data/interfaces/agenda-data';
 
 import {
   Controller,
@@ -24,6 +24,7 @@ const outputSchema = z.object({
       description: z.string(),
       duration: z.number(),
       passed: z.boolean().default(false),
+      end_date: z.date(),
     }),
     vote: z.object({
       count: z.number(),
@@ -70,6 +71,7 @@ export class ShowAgendaDetailsController {
           description: details.agenda.description,
           duration: details.agenda.duration,
           passed: details.agenda.passed,
+          end_date: details.agenda.endDate,
         },
         vote: {
           count: details.votes.totalCount,

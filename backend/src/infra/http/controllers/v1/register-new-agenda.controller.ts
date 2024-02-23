@@ -1,4 +1,5 @@
-import { RegisterNewAgenda } from '@/application/use-cases/register-new-agenda';
+import { AgendaData } from '@/infra/data/interfaces/agenda-data';
+import { Public } from '@/infra/auth/public';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
 
 import { Body, Controller, Post, UsePipes } from '@nestjs/common';
@@ -25,9 +26,10 @@ type RegisterNewAgendaInput = z.infer<typeof inputSchema>;
 @ApiBearerAuth()
 @Controller('/v1/agenda')
 export class RegisterNewAgendaController {
-  constructor(private readonly registerNewAgenda: RegisterNewAgenda) {}
+  constructor(private readonly agendaData: AgendaData) {}
 
   @Post()
+  @Public()
   @UsePipes(new ZodValidationPipe({ body: inputSchema }))
   @ApiOperation({ summary: 'Register a New Agenda' })
   @ApiBody({ schema: zodToOpenAPI(inputSchema) })
@@ -37,7 +39,7 @@ export class RegisterNewAgendaController {
   })
   async execute(@Body() input: RegisterNewAgendaInput): Promise<void> {
     const { description, duration } = input;
-    await this.registerNewAgenda.execute({
+    await this.agendaData.save({
       description,
       durationInSeconds: +duration,
     });

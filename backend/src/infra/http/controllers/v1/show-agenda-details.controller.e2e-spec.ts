@@ -36,6 +36,7 @@ describe('Show agenda details (e2e)', () => {
           description: 'New agenda 01',
           duration: 10800,
           passed: false,
+          end_date: expect.any(String),
         },
         vote: {
           count: 0,

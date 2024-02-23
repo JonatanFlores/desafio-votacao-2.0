@@ -9,6 +9,7 @@ export abstract class AgendaData {
       id: string;
       description: string;
       duration: number;
+      endDate: Date;
     }>
   >;
 

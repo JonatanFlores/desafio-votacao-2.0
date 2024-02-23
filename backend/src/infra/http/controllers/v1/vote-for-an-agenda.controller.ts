@@ -1,5 +1,5 @@
 import { Public } from '@/infra/auth/public';
-import { PrismaService } from '@/infra/database/prisma.service';
+import { VoteData } from '@/infra/data/interfaces/vote-data';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
 import { isValidCPF } from '@/infra/validation/is-valid-cpf';
 
@@ -28,7 +28,7 @@ type VoteForAnAgendaInput = z.infer<typeof inputSchema>;
 @ApiTags('vote')
 @Controller('/v1/vote')
 export class VoteForAnAgendaController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly voteData: VoteData) {}
 
   @Post()
   @Public()
@@ -41,15 +41,13 @@ export class VoteForAnAgendaController {
   })
   async execute(@Body() input: VoteForAnAgendaInput): Promise<void> {
     const { cpf, agendaId, choice } = input;
-    const existingVote = await this.prisma.vote.findFirst({
-      where: {
-        cpf,
-        agendaId,
-      },
+    const existingVote = await this.voteData.findUserVote({
+      cpf,
+      agendaId,
     });
     if (existingVote) {
       throw new ConflictException('You have already voted');
     }
-    await this.prisma.vote.create({ data: { agendaId, cpf, choice } });
+    await this.voteData.create({ agendaId, cpf, choice });
   }
 }

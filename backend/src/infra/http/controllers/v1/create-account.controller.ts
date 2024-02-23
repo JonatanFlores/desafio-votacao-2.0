@@ -1,5 +1,5 @@
 import { Public } from '@/infra/auth/public';
-import { PrismaService } from '@/infra/database/prisma.service';
+import { UserData } from '@/infra/data/interfaces/user-data';
 import { isValidCPF } from '@/infra/validation/is-valid-cpf';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
 
@@ -34,7 +34,7 @@ type CreateAccountInput = z.infer<typeof inputSchema>;
 @ApiTags('account')
 @Controller('/v1/account')
 export class CreateAccountController {
-  constructor(private prisma: PrismaService) {}
+  constructor(private userData: UserData) {}
 
   @Post()
   @Public()
@@ -51,19 +51,15 @@ export class CreateAccountController {
   })
   async execute(@Body() input: CreateAccountInput): Promise<void> {
     const { cpf, name, password } = input;
-    const userWithSameEmail = await this.prisma.user.findUnique({
-      where: { cpf },
-    });
+    const userWithSameEmail = await this.userData.findByCpf(cpf);
     if (userWithSameEmail) {
       throw new ConflictException('An user with the same CPF already existis.');
     }
     const hashedPassword = await hash(password, 8);
-    await this.prisma.user.create({
-      data: {
-        cpf,
-        name,
-        password: hashedPassword,
-      },
+    await this.userData.create({
+      cpf,
+      name,
+      password: hashedPassword,
     });
   }
 }

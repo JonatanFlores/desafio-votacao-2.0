@@ -1,5 +1,5 @@
 import { PrismaService } from '@/infra/database/prisma.service';
-import { AgendaData } from '@/application/data/agenda-data';
+import { AgendaData } from '@/infra/data/interfaces/agenda-data';
 
 import { Injectable } from '@nestjs/common';
 
@@ -28,12 +28,20 @@ export class AgendaDataDatabase implements AgendaData {
       id: string;
       description: string;
       duration: number;
+      endDate: Date;
     }>
   > {
     const agendas = await this.prisma.agenda.findMany({
-      select: { id: true, description: true, duration: true },
+      select: { id: true, description: true, duration: true, createdAt: true },
     });
-    return agendas;
+    return agendas.map((agenda) => {
+      const durationInMinutes = agenda.duration / 60;
+      const endDate = addMinutesToDate(agenda.createdAt, durationInMinutes);
+      return {
+        ...agenda,
+        endDate,
+      };
+    });
   }
 
   async getDetails(input: { agendaId: string }): Promise<{
@@ -68,7 +76,8 @@ export class AgendaDataDatabase implements AgendaData {
     );
     const totalCount = result.YES + result.NO;
     const agendaPassed = result.YES > result.NO;
-    const endDate = addMinutesToDate(agenda.createdAt, agenda.duration);
+    const durationInMinutes = agenda.duration / 60;
+    const endDate = addMinutesToDate(agenda.createdAt, durationInMinutes);
     return {
       agenda: {
         id: agenda.id,

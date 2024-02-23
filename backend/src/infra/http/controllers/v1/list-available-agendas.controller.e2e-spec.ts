@@ -42,11 +42,13 @@ describe('List available agendas (e2e)', () => {
             id: expect.any(String),
             description: 'New agenda 01',
             duration: 180,
+            end_date: expect.any(String),
           },
           {
             id: expect.any(String),
             description: 'New agenda 02',
             duration: 300,
+            end_date: expect.any(String),
           },
         ],
       },

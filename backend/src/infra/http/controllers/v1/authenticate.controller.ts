@@ -1,7 +1,7 @@
 import { Public } from '@/infra/auth/public';
-import { PrismaService } from '@/infra/database/prisma.service';
 import { isValidCPF } from '@/infra/validation/is-valid-cpf';
 import { ZodValidationPipe } from '@/infra/http/pipes/zod-validation-pipe';
+import { UserData } from '@/infra/data/interfaces/user-data';
 
 import {
   Body,
@@ -40,7 +40,7 @@ type AuthenticateOutput = z.infer<typeof outputSchema>;
 export class AuthenticateController {
   constructor(
     private jwt: JwtService,
-    private prisma: PrismaService,
+    private userData: UserData,
   ) {}
 
   @Post()
@@ -59,7 +59,7 @@ export class AuthenticateController {
   })
   async execute(@Body() input: AuthenticateInput): Promise<AuthenticateOutput> {
     const { cpf, password } = input;
-    const user = await this.prisma.user.findUnique({ where: { cpf } });
+    const user = await this.userData.findByCpf(cpf);
     if (!user) {
       throw new UnauthorizedException('User credentials do not match');
     }
