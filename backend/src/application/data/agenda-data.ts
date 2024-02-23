@@ -11,4 +11,19 @@ export abstract class AgendaData {
       duration: number;
     }>
   >;
+
+  abstract getDetails(input: { agendaId: string }): Promise<{
+    agenda: {
+      id: string;
+      description: string;
+      duration: number;
+      passed: boolean;
+      endDate: Date;
+    };
+    votes: {
+      YES: number;
+      NO: number;
+      totalCount: number;
+    };
+  } | null>;
 }

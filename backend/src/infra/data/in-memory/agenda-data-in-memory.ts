@@ -29,4 +29,17 @@ export class AgendaDataInMemory implements AgendaData {
   > {
     return this.items;
   }
+
+  async getDetails(input: { agendaId: string }): Promise<{
+    agenda: {
+      id: string;
+      description: string;
+      duration: number;
+      passed: boolean;
+      endDate: Date;
+    };
+    votes: { YES: number; NO: number; totalCount: number };
+  } | null> {
+    throw new Error('Method not implemented.');
+  }
 }
